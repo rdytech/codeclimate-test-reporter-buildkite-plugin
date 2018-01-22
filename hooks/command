@@ -14,9 +14,12 @@ install_reporter() {
   fi
 }
 
-report_coverage() {
+download_artifact() {
+  printf -- "--- :buildkite: downloading artifact\\n"
   buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
+}
 
+report_coverage() {
   printf -- "--- :codeclimate: reporting coverage\\n"
   ./cc-test-reporter format-coverage \
     --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
@@ -32,4 +35,5 @@ if [[ -z "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION:-}" ]] ; then
 fi
 
 install_reporter
+download_artifact
 report_coverage
