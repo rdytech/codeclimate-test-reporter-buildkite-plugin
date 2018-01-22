@@ -31,11 +31,5 @@ if [[ -z "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION:-}" ]] ; then
   BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION="latest"
 fi
 
-directory=$(mktemp --directory)
-pushd "$directory"
-
 install_reporter
 report_coverage
-
-popd
-rm --recursive "$directory"
