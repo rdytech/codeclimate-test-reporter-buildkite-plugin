@@ -7,8 +7,8 @@ install_reporter() {
     printf -- "--- :codeclimate: Installing cc-test-reporter\\n"
 
     curl --location --silent \
-      "https://codeclimate.com/downloads/test-reporter/test-reporter-$(${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION})-linux-amd64" > /usr/bin/cc-test-reporter
-    chmod +x /usr/bin/cc-test-reporter
+      "https://codeclimate.com/downloads/test-reporter/test-reporter-$(${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION})-linux-amd64" > /usr/local/bin/cc-test-reporter
+    chmod +x /usr/local/bin/cc-test-reporter
   fi
 }
 
