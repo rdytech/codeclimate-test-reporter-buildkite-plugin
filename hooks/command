@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -euo pipefail
+
+install_reporter() {
+  if [ ! -f ./cc-test-reporter ]; then
+    curl --location --silent \
+      https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    chmod +x ./cc-test-reporter
+  fi
+}
+
+report_coverage() {
+  buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
+
+  ./cc-test-reporter format-coverage \
+    --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
+    --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
+    --output "coverage/codeclimate.json" \
+    "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}"
+
+  ./cc-test-reporter upload-coverage || true
+}
+
+printf -- "--- :codeclimate: Installing cc-test-reporter\\n"
+
+install_reporter
+
+printf -- "--- :codeclimate: reporting coverage\\n"
+
+report_coverage
