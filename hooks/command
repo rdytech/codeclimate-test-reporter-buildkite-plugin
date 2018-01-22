@@ -3,8 +3,11 @@
 set -euo pipefail
 
 install_reporter() {
-  if [[ -z "$(which cc-test-reporter)" ]] ; then
-    printf -- "--- :codeclimate: Installing cc-test-reporter\\n"
+  if [ -f ./cc-test-reporter ]; then
+    printf -- "--- :codeclimate: Using local binary ./cc-test-reporter"
+    CODECLIMATE_TEST_REPORTER_PATH="./cc-test-reporter"
+  elif [[ -z "$(which cc-test-reporter)" ]] ; then
+    printf -- "--- :codeclimate: Installing %s cc-test-reporter\\n" "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}"
 
     curl --location --silent \
       "https://codeclimate.com/downloads/test-reporter/test-reporter-${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}-linux-amd64" > ./cc-test-reporter
