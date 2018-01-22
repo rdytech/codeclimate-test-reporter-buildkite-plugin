@@ -7,8 +7,12 @@ install_reporter() {
     printf -- "--- :codeclimate: Installing cc-test-reporter\\n"
 
     curl --location --silent \
-      "https://codeclimate.com/downloads/test-reporter/test-reporter-${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}-linux-amd64" > /usr/local/bin/cc-test-reporter
-    chmod +x /usr/local/bin/cc-test-reporter
+      "https://codeclimate.com/downloads/test-reporter/test-reporter-${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}-linux-amd64" > ./cc-test-reporter
+    chmod +x ./cc-test-reporter
+    CODECLIMATE_TEST_REPORTER_PATH="./cc-test-reporter"
+  else
+    CODECLIMATE_TEST_REPORTER_PATH="$(which cc-test-reporter)"
+    printf -- "--- :codeclimate: Using system binary at %s\\n" "${CODECLIMATE_TEST_REPORTER_PATH}"
   fi
 }
 
@@ -16,13 +20,13 @@ report_coverage() {
   buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
 
   printf -- "--- :codeclimate: reporting coverage\\n"
-  $(which cc-test-reporter) format-coverage \
+  ${CODECLIMATE_TEST_REPORTER_PATH} format-coverage \
     --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
     --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
     --output "coverage/codeclimate.json" \
     "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}"
 
-  $(which cc-test-reporter) upload-coverage
+  ${CODECLIMATE_TEST_REPORTER_PATH} upload-coverage
 }
 
 if [[ -z "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION:-}" ]] ; then
