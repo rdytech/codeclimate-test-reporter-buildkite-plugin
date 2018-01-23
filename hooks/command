@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -euo pipefail
+
+install_reporter() {
+  if [ -f ./cc-test-reporter ]; then
+    printf -- "--- :codeclimate: Using local binary ./cc-test-reporter"
+  else
+    printf -- "--- :codeclimate: Installing %s cc-test-reporter\\n" "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}"
+
+    curl --location --silent \
+      "https://codeclimate.com/downloads/test-reporter/test-reporter-${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}-linux-amd64" > ./cc-test-reporter
+    chmod +x ./cc-test-reporter
+  fi
+}
+
+download_artifact() {
+  printf -- "--- :buildkite: downloading artifact\\n"
+  buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
+}
+
+report_coverage() {
+  printf -- "--- :codeclimate: reporting coverage\\n"
+  ./cc-test-reporter format-coverage \
+    --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
+    --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
+    --output "coverage/codeclimate.json" \
+    "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}"
+
+  ./cc-test-reporter upload-coverage
+}
+
+if [[ -z "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION:-}" ]] ; then
+  BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION="latest"
+fi
+
+install_reporter
+download_artifact
+report_coverage

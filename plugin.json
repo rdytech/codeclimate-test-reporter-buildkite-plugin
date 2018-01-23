@@ -1,0 +1,7 @@
+{
+  "name": "codeclimate-test-reporter-buildkite-plugin",
+  "description": "Reports codeclimate test coverage",
+  "author": "@jobready",
+  "public": true,
+  "requirements": []
+}
