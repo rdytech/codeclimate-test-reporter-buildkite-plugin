@@ -14,20 +14,36 @@ install_reporter() {
   fi
 }
 
-download_artifact() {
+download_artifacts() {
   printf -- "--- :buildkite: downloading artifact\\n"
   buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
 }
 
 report_coverage() {
   printf -- "--- :codeclimate: reporting coverage\\n"
-  ./cc-test-reporter format-coverage \
-    --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
-    --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
-    --output "coverage/codeclimate.json" \
-    "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}"
+
+  count=1
+  for f in ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}; do
+    printf -- "Formatting file: %s" "$f"
+    ./cc-test-reporter format-coverage \
+      --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
+      --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
+      --output "coverage/codeclimate.$count.json" \
+      "$f"
+    (( count++ ))
+  done
+
+  if [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS ]] ; then
+    SUM_PARTS="--parts ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}"
+  fi
+  ./cc-test-reporter sum-coverage "${SUM_PARTS}" coverage/codeclimate.*.json
 
   ./cc-test-reporter upload-coverage
+}
+
+save_coverage() {
+  printf -- "--- :buildkite: uploading coverage\\n"
+  buildkite-agent artifact upload coverage/codeclimate.json
 }
 
 if [[ -z "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION:-}" ]] ; then
@@ -35,5 +51,6 @@ if [[ -z "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION:-}" ]] ; then
 fi
 
 install_reporter
-download_artifact
+download_artifacts
 report_coverage
+[[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_SAVE_COVERAGE ]] && save_coverage
