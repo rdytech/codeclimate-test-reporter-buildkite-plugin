@@ -76,9 +76,9 @@ If you expect multiple partial coverage artifacts, set this value to enforce a c
 
 Example: `2`
 
-### `save_coverage` (optional)
+### `debug` (optional)
 
-Set to true to save the coverage upload file as a BuildKite artifact. For debugging.
+Set to true to enable cc-test-reporter --debug flag
 
 Example: `true`
 
