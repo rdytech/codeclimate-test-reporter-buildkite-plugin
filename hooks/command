@@ -36,7 +36,7 @@ report_coverage() {
   if [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS ]] ; then
     SUM_PARTS="--parts ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}"
   fi
-  ./cc-test-reporter sum-coverage ${SUM_PARTS} coverage/codeclimate.*.json
+  ./cc-test-reporter sum-coverage ${SUM_PARTS:-} coverage/codeclimate.*.json
 
   ./cc-test-reporter upload-coverage
 }
