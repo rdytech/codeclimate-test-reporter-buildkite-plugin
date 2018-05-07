@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -euox pipefail
 
 install_reporter() {
   if [ -f ./cc-test-reporter ]; then
@@ -25,7 +25,7 @@ report_coverage() {
   count=1
   for f in ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}; do
     printf -- "Formatting file: %s\\n" "$f"
-    ./cc-test-reporter format-coverage "${DEBUG}" \
+    ./cc-test-reporter format-coverage ${debug:+"-d"} \
       --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
       --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
       --output "coverage/codeclimate.$count.json" \
@@ -38,20 +38,17 @@ report_coverage() {
   else
     SUM_PARTS=""
   fi
-  ./cc-test-reporter sum-coverage "${DEBUG}" ${SUM_PARTS} coverage/codeclimate.*.json
+  ./cc-test-reporter sum-coverage ${debug:+"-d"} ${SUM_PARTS} coverage/codeclimate.*.json
 
-  ./cc-test-reporter upload-coverage "${DEBUG}"
+  ./cc-test-reporter upload-coverage ${debug:+"-d"}
 }
 
 if [[ -z "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION:-}" ]] ; then
   BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION="latest"
 fi
 
-if [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DEBUG ]] ; then
-  DEBUG="--debug"
-else
-  DEBUG=""
-fi
+debug=""
+[[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DEBUG ]] && debug="yes"
 
 install_reporter
 download_artifacts
