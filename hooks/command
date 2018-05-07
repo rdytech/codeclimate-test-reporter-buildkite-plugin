@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euox pipefail
+set -euo pipefail
 
 install_reporter() {
   if [ -f ./cc-test-reporter ]; then
