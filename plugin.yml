@@ -1,0 +1,19 @@
+name: codeclimate-test-reporter
+description: A Buildkite plugin to report coverage with the Code Climate test reporter
+author: https://github.com/jobready
+requirements: []
+configuration:
+  properties:
+    artifact:
+      type: string
+    input_type:
+      type: string
+    prefix:
+      type: string
+    version:
+      type: string
+    parts:
+      type: integer
+    debug:
+      type: string
+  required: [artifact, input_type]
