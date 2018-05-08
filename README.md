@@ -91,7 +91,7 @@ The `CC_TEST_REPORTER_ID` environment variable must be configured.
 To run the [Buildkite Plugin Linter](https://github.com/buildkite-plugins/buildkite-plugin-linter), run
 
 ```sh
-docker-compose run --rm lint
+docker-compose run --rm lint --name jobready/codeclimate-test-reporter
 ```
 
 ## License
