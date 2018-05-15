@@ -1,4 +1,4 @@
-name: codeclimate-test-reporter
+name: Code Climate Test Reporter
 description: A Buildkite plugin to report coverage with the Code Climate test reporter
 author: https://github.com/jobready
 requirements: []
