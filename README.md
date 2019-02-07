@@ -23,10 +23,10 @@ steps:
   - command: "Report Code Climate Coverage"
     label: ":codeclimate: Report coverage"
     plugins:
-      jobready/codeclimate-test-reporter#v2.0:
-        artifact: "coverage/.resultset.json"
-        input_type: simplecov
-        prefix: /app
+      - jobready/codeclimate-test-reporter#v2.0:
+          artifact: "coverage/.resultset.json"
+          input_type: simplecov
+          prefix: /app
     env:
       CC_TEST_REPORTER_ID:
 ```
