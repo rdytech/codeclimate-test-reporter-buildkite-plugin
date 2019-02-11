@@ -19,19 +19,25 @@ download_artifacts() {
   buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
 }
 
+format_file() {
+  printf -- "Formatting file: %s\\n" "$1"
+  ./cc-test-reporter format-coverage ${debug:+"-d"} \
+    --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
+    --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
+    --output "coverage/codeclimate.$2.json" \
+    "$1"
+}
+
 report_coverage() {
   printf -- "--- :codeclimate: reporting coverage\\n"
 
   count=1
   for f in ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}; do
-    printf -- "Formatting file: %s\\n" "$f"
-    ./cc-test-reporter format-coverage ${debug:+"-d"} \
-      --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
-      --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
-      --output "coverage/codeclimate.$count.json" \
-      "$f"
+    format_file "$f" "$count" &
     (( count++ ))
   done
+
+  wait
 
   if [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS ]] ; then
     SUM_PARTS="--parts ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}"
