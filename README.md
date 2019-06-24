@@ -28,6 +28,14 @@ steps:
       CC_TEST_REPORTER_ID:
 ```
 
+If you are running parallel builds you'll probably want to create uniquely
+named artifacts. That can be done by renaming the `.resultset.json` file
+after your tests have run:
+
+```bash
+mv -v coverage/.resultset.json coverage/.resultset${BUILDKITE_PARALLEL_JOB}.json
+```
+
 ## Configuration
 
 ### `artifact` (required)
