@@ -6,6 +6,6 @@ services:
       - ".:/plugin:ro"
   lint:
     image: buildkite/plugin-linter
-    command: ['--id', 'jobready/codeclimate-test-reporter-buildkite-plugin']
+    command: ['--id', 'waysact/codeclimate-test-reporter-buildkite-plugin']
     volumes:
       - ".:/plugin:ro"

@@ -16,4 +16,6 @@ configuration:
       type: integer
     debug:
       type: string
+    workdir:
+      type: string
   required: [artifact, input_type]

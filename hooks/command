@@ -56,6 +56,11 @@ fi
 debug=""
 [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DEBUG ]] && debug="yes"
 
+# hack necessary for working with monorepos and our golang tests
+if [[ -z "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_WORKDIR:-}" ]] ; then
+  cd ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_WORKDIR}
+fi
+
 install_reporter
 download_artifacts
 report_coverage
