@@ -57,7 +57,8 @@ report_coverage() {
   else
     SUM_PARTS=""
   fi
-  ./cc-test-reporter sum-coverage ${debug:+"-d"} ${SUM_PARTS} "coverage/$formated_file_prefix.*.json"
+
+  ./cc-test-reporter sum-coverage ${debug:+"-d"} ${SUM_PARTS} coverage/${formated_file_prefix}.*.json
 
   ./cc-test-reporter upload-coverage ${debug:+"-d"}
 }
