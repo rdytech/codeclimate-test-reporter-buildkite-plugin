@@ -20,6 +20,6 @@ configuration:
       type: boolean
     report:
       type: boolean
-    formatted_file_prefix:
+    file_prefix:
       type: string
   required: [artifact, input_type]

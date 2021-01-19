@@ -15,7 +15,7 @@ install_reporter() {
 }
 
 download_artifacts() {
-  printf -- "--- :buildkite: downloading artifact\\n"
+  printf -- "--- :buildkite: Downloading artifact\\n"
   buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
 }
 
@@ -34,7 +34,7 @@ format_files() {
     return
   fi
 
-  printf -- "--- :codeclimate: formatting coverage\\n"
+  printf -- "--- :codeclimate: Formatting coverage\\n"
 
   count=1
   for f in ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}; do
@@ -50,7 +50,7 @@ report_coverage() {
     return
   fi
 
-  printf -- "--- :codeclimate: reporting coverage\\n"
+  printf -- "--- :codeclimate: Reporting coverage\\n"
 
   if [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS ]] ; then
     SUM_PARTS="--parts ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}"
@@ -71,7 +71,7 @@ debug=""
 [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DEBUG ]] && debug="yes"
 
 format=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT:-true}
-formated_file_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMATTED_FILE_PREFIX:-"codeclimate"} 
+formated_file_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FILE_PREFIX:-"codeclimate"} 
 report=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT:-true}
 
 install_reporter
