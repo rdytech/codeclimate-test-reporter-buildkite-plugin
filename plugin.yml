@@ -18,8 +18,8 @@ configuration:
       type: string
     format:
       type: boolean
-      default: true
-    upload:
+    report:
       type: boolean
-      default: true
+    formatted_file_prefix
+      type: string
   required: [artifact, input_type]
