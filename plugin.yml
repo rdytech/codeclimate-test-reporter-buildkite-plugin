@@ -16,4 +16,10 @@ configuration:
       type: integer
     debug:
       type: string
+    format:
+      type: boolean
+      default: true
+    upload:
+      type: boolean
+      default: true
   required: [artifact, input_type]

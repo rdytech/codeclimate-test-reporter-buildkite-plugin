@@ -28,8 +28,8 @@ format_file() {
     "$1"
 }
 
-report_coverage() {
-  printf -- "--- :codeclimate: reporting coverage\\n"
+format_files() {
+  printf -- "--- :codeclimate: formatting coverage\\n"
 
   count=1
   for f in ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}; do
@@ -38,6 +38,10 @@ report_coverage() {
   done
 
   wait
+}
+
+report_coverage() {
+  printf -- "--- :codeclimate: reporting coverage\\n"
 
   if [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS ]] ; then
     SUM_PARTS="--parts ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}"
@@ -58,4 +62,5 @@ debug=""
 
 install_reporter
 download_artifacts
+format_files
 report_coverage
