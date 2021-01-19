@@ -20,12 +20,12 @@ download_artifacts() {
 }
 
 format_file() {
-  file_name="$formated_file_prefix.$2.json"
-  printf -- "Formatting file: %s to %s\\n" "$1" "$file_name"
+  output_file="coverage/$formated_file_prefix.$2.json"
+  printf -- "Formatting file: %s to %s\\n" "$1" "$output_file"
   ./cc-test-reporter format-coverage ${debug:+"-d"} \
     --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
     --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
-    --output "coverage/$formated_file_prefix.$2.json" \
+    --output "$output_file" \
     "$1"
 }
 
