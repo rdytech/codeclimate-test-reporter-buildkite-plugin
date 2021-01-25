@@ -20,7 +20,7 @@ download_artifacts() {
 }
 
 format_file() {
-  output_file="coverage/$formated_file_prefix.$2.json"
+  output_file="coverage/$formatted_file_prefix.$2.json"
   printf -- "Formatting file: %s to %s\\n" "$1" "$output_file"
   ./cc-test-reporter format-coverage ${debug:+"-d"} \
     --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
@@ -58,7 +58,7 @@ report_coverage() {
     SUM_PARTS=""
   fi
 
-  ./cc-test-reporter sum-coverage ${debug:+"-d"} ${SUM_PARTS} coverage/${formated_file_prefix}.*.json
+./cc-test-reporter sum-coverage ${debug:+"-d"} "${SUM_PARTS}" coverage/"${formatted_file_prefix}".*.json
 
   ./cc-test-reporter upload-coverage ${debug:+"-d"}
 }
@@ -71,7 +71,7 @@ debug=""
 [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DEBUG ]] && debug="yes"
 
 format=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT:-true}
-formated_file_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FILE_PREFIX:-"codeclimate"} 
+formatted_file_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FILE_PREFIX:-"codeclimate"} 
 report=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT:-true}
 
 install_reporter
