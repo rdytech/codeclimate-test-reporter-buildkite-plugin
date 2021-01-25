@@ -110,7 +110,6 @@ This is best shown via an example;
     plugins:
       - jobready/codeclimate-test-reporter#v2.2:
           artifact: "coverage/codeclimate**"
-          file_prefix: "codeclimate.*"
           format: false
     env:
       CC_TEST_REPORTER_ID:
