@@ -15,21 +15,26 @@ install_reporter() {
 }
 
 download_artifacts() {
-  printf -- "--- :buildkite: downloading artifact\\n"
+  printf -- "--- :buildkite: Downloading artifact\\n"
   buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
 }
 
 format_file() {
-  printf -- "Formatting file: %s\\n" "$1"
+  output_file="coverage/$formatted_file_prefix.$2.json"
+  printf -- "Formatting file: %s to %s\\n" "$1" "$output_file"
   ./cc-test-reporter format-coverage ${debug:+"-d"} \
     --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
     --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
-    --output "coverage/codeclimate.$2.json" \
+    --output "${output_file}" \
     "$1"
 }
 
-report_coverage() {
-  printf -- "--- :codeclimate: reporting coverage\\n"
+format_files() {
+  if [ "$format" = false ] ; then
+    return
+  fi
+
+  printf -- "--- :codeclimate: Formatting coverage\\n"
 
   count=1
   for f in ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}; do
@@ -38,13 +43,22 @@ report_coverage() {
   done
 
   wait
+}
+
+report_coverage() {
+  if [ "$report" = false ] ; then
+    return
+  fi
+
+  printf -- "--- :codeclimate: Reporting coverage\\n"
 
   if [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS ]] ; then
     SUM_PARTS="--parts ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}"
   else
     SUM_PARTS=""
   fi
-  ./cc-test-reporter sum-coverage ${debug:+"-d"} ${SUM_PARTS} coverage/codeclimate.*.json
+
+  ./cc-test-reporter sum-coverage ${debug:+"-d"} ${SUM_PARTS} coverage/${formatted_file_prefix}.*.json
 
   ./cc-test-reporter upload-coverage ${debug:+"-d"}
 }
@@ -56,6 +70,11 @@ fi
 debug=""
 [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DEBUG ]] && debug="yes"
 
+format=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT:-true}
+formatted_file_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FILE_PREFIX:-"codeclimate"} 
+report=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT:-true}
+
 install_reporter
 download_artifacts
+format_files
 report_coverage

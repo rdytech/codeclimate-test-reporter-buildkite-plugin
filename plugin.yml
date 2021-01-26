@@ -16,4 +16,10 @@ configuration:
       type: integer
     debug:
       type: string
+    format:
+      type: boolean
+    report:
+      type: boolean
+    file_prefix:
+      type: string
   required: [artifact, input_type]
