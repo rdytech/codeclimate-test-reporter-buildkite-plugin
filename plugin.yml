@@ -22,4 +22,6 @@ configuration:
       type: boolean
     file_prefix:
       type: string
+    add_prefix:
+      type: string
   required: [artifact, input_type]

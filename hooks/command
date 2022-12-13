@@ -26,6 +26,7 @@ format_file() {
     --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
     --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
     --output "${output_file}" \
+    --add-prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ADD_PREFIX}"
     "$1"
 }
 
@@ -73,6 +74,7 @@ debug=""
 format=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT:-true}
 formatted_file_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FILE_PREFIX:-"codeclimate"} 
 report=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT:-true}
+add_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ADD_PREFIX:-""}
 
 install_reporter
 download_artifacts
