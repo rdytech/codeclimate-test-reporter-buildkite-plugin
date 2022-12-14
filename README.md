@@ -184,6 +184,11 @@ Example: `false`
 
 Controls the name outputs files formatted by the codeclimate test reporter. Required to stop artifact names clashing when processing muiltple test suites.
 
+### `add_prefix` (optional, default `<empty_string>`)
+
+Controls the prefix to add to file paths in coverage payloads, to make them match the project's directory structure.
+
+
 ### `CC_TEST_REPORTER_ID` (required)
 
 The `CC_TEST_REPORTER_ID` environment variable must be configured.
