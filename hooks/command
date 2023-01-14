@@ -7,14 +7,14 @@ install_reporter() {
     return
   fi
 
-  if [ -f ./cc-test-reporter ]; then
-    printf -- "--- :codeclimate: Using local binary ./cc-test-reporter"
+  if command -v cc-test-reporter &> /dev/null; then
+    printf -- "--- :codeclimate: Using local binary"
   else
-    printf -- "--- :codeclimate: Installing %s cc-test-reporter\\n" "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}"
+    printf -- "--- :codeclimate: Installing %s cc-test-reporter\\n" "${version}"
 
-    curl --location --silent --output ./cc-test-reporter \
-      "https://codeclimate.com/downloads/test-reporter/test-reporter-${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}-linux-amd64"
-    chmod +x ./cc-test-reporter
+    curl --location --silent --output /usr/local/bin/cc-test-reporter \
+      "https://codeclimate.com/downloads/test-reporter/test-reporter-${version}-linux-amd64" && \
+    chmod +x /usr/local/bin/cc-test-reporter
   fi
 }
 
@@ -30,12 +30,25 @@ download_artifacts() {
 format_file() {
   output_file="coverage/$formatted_file_prefix.$2.json"
   printf -- "Formatting file: %s to %s\\n" "$1" "$output_file"
-  ./cc-test-reporter format-coverage ${debug:+"-d"} \
-    --input-type "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" \
-    --prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" \
-    --output "${output_file}" \
-    --add-prefix "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ADD_PREFIX}" \
-    "$1"
+
+  args=()
+  args+=( "format-coverage" )
+  args+=( ${debug:+"-d"} )
+  args+=( "--input-type" )
+  args+=( "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE}" )
+  args+=( "--output" )
+  args+=( "${output_file}" )
+  if [ -n "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX-}" ]; then
+    args+=( "--prefix" )
+    args+=( "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX}" )
+  fi
+  if [ -n "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ADD_PREFIX-}" ]; then
+    args+=( "--add-prefix" )
+    args+=( "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ADD_PREFIX}" )
+  fi
+  args+=( "$1" )
+
+  cc-test-reporter "${args[@]}"
 }
 
 format_files() {
@@ -61,20 +74,18 @@ report_coverage() {
 
   printf -- "--- :codeclimate: Reporting coverage\\n"
 
-  if [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS ]] ; then
-    SUM_PARTS="--parts ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}"
-  else
-    SUM_PARTS=""
+  args=()
+  args+=( "sum-coverage" )
+  args+=( ${debug:+"-d"} )
+  if [ -n "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS-}" ]; then
+    args+=( "--parts" )
+    args+=( "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}" )
   fi
+  args+=( "coverage/${formatted_file_prefix}.*.json" )
 
-  ./cc-test-reporter sum-coverage ${debug:+"-d"} ${SUM_PARTS} coverage/${formatted_file_prefix}.*.json
-
-  ./cc-test-reporter upload-coverage ${debug:+"-d"}
+  cc-test-reporter "${args[@]}"
+  cc-test-reporter upload-coverage ${debug:+"-d"}
 }
-
-if [[ -z "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION:-}" ]] ; then
-  BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION="latest"
-fi
 
 debug=""
 [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DEBUG ]] && debug="yes"
@@ -82,8 +93,9 @@ debug=""
 install=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INSTALL:-true}
 download=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DOWNLOAD:-true}
 format=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT:-true}
-formatted_file_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FILE_PREFIX:-"codeclimate"} 
 report=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT:-true}
+formatted_file_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FILE_PREFIX:-"codeclimate"}
+version=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION:-"latest"}
 
 install_reporter
 download_artifacts

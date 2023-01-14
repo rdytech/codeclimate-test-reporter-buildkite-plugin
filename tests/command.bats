@@ -10,8 +10,8 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT="false"
   export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT="false"
 
-  stub curl "--location --silent --output ./cc-test-reporter \"https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64\" : echo 'Binary downloaded'"
-  stub chmod "+x ./cc-test-reporter : echo 'Binary made executable'"
+  stub curl "--location --silent --output /usr/local/bin/cc-test-reporter \"https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64\" : echo 'Binary downloaded'"
+  stub chmod "+x /usr/local/bin/cc-test-reporter : echo 'Binary made executable'"
 
   run "$PWD/hooks/command"
 
@@ -38,4 +38,103 @@ load '/usr/local/lib/bats/load.bash'
   assert_output --partial "Artifacts downloaded"
 
   unstub buildkite-agent
+}
+
+@test "Formats files" {
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INSTALL="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DOWNLOAD="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT="coverage/.resultset.json"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE="simplecov"
+
+  stub cc-test-reporter "format-coverage --input-type simplecov --output coverage/codeclimate.1.json coverage/.resultset.json : echo 'Artifacts formatted'"
+  run "$PWD/hooks/command"
+
+  assert_success
+  assert_output --partial "--- :codeclimate: Formatting coverage"
+  assert_output --partial "Formatting file: coverage/.resultset.json to coverage/codeclimate.1.json"
+  assert_output --partial "Artifacts formatted"
+
+  unstub cc-test-reporter
+}
+
+@test "Formats files with prefix" {
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INSTALL="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DOWNLOAD="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT="coverage/.resultset.json"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE="simplecov"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PREFIX="/app"
+
+  stub cc-test-reporter "format-coverage --input-type simplecov --output coverage/codeclimate.1.json --prefix /app coverage/.resultset.json : echo 'Artifacts formatted'"
+  run "$PWD/hooks/command"
+
+  assert_success
+  assert_output --partial "--- :codeclimate: Formatting coverage"
+  assert_output --partial "Formatting file: coverage/.resultset.json to coverage/codeclimate.1.json"
+  assert_output --partial "Artifacts formatted"
+
+  unstub cc-test-reporter
+}
+
+@test "Formats files with add-prefix" {
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INSTALL="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DOWNLOAD="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT="coverage/.resultset.json"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE="simplecov"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ADD_PREFIX="/path"
+
+  stub cc-test-reporter "format-coverage --input-type simplecov --output coverage/codeclimate.1.json --add-prefix /path coverage/.resultset.json : echo 'Artifacts formatted'"
+  run "$PWD/hooks/command"
+
+  assert_success
+  assert_output --partial "--- :codeclimate: Formatting coverage"
+  assert_output --partial "Formatting file: coverage/.resultset.json to coverage/codeclimate.1.json"
+  assert_output --partial "Artifacts formatted"
+
+  unstub cc-test-reporter
+}
+
+@test "Reports coverage" {
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INSTALL="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DOWNLOAD="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT="coverage/.resultset.json"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE="simplecov"
+
+  stub cc-test-reporter \
+    "sum-coverage coverage/codeclimate.*.json : echo 'Coverage summed'" \
+    "upload-coverage : echo 'Coverage uploaded'"
+
+  run "$PWD/hooks/command"
+
+  assert_success
+  assert_output --partial "--- :codeclimate: Reporting coverage"
+  assert_output --partial "Coverage summed"
+  assert_output --partial "Coverage uploaded"
+
+  unstub cc-test-reporter
+}
+
+@test "Reports coverage with 3 parts" {
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INSTALL="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DOWNLOAD="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT="coverage/.resultset.json"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE="simplecov"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS="3"
+
+  stub cc-test-reporter \
+    "sum-coverage --parts 3 coverage/codeclimate.*.json : echo 'Coverage summed'" \
+    "upload-coverage : echo 'Coverage uploaded'"
+
+  run "$PWD/hooks/command"
+
+  assert_success
+  assert_output --partial "--- :codeclimate: Reporting coverage"
+  assert_output --partial "Coverage summed"
+  assert_output --partial "Coverage uploaded"
+
+  unstub cc-test-reporter
 }
