@@ -3,18 +3,26 @@
 set -euo pipefail
 
 install_reporter() {
+  if [ "$install" = false ] ; then
+    return
+  fi
+
   if [ -f ./cc-test-reporter ]; then
     printf -- "--- :codeclimate: Using local binary ./cc-test-reporter"
   else
     printf -- "--- :codeclimate: Installing %s cc-test-reporter\\n" "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}"
 
-    curl --location --silent \
-      "https://codeclimate.com/downloads/test-reporter/test-reporter-${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}-linux-amd64" > ./cc-test-reporter
+    curl --location --silent --output ./cc-test-reporter \
+      "https://codeclimate.com/downloads/test-reporter/test-reporter-${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION}-linux-amd64"
     chmod +x ./cc-test-reporter
   fi
 }
 
 download_artifacts() {
+  if [ "$download" = false ] ; then
+    return
+  fi
+
   printf -- "--- :buildkite: Downloading artifact\\n"
   buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
 }
@@ -71,6 +79,8 @@ fi
 debug=""
 [[ -v BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DEBUG ]] && debug="yes"
 
+install=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INSTALL:-true}
+download=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DOWNLOAD:-true}
 format=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT:-true}
 formatted_file_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FILE_PREFIX:-"codeclimate"} 
 report=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT:-true}

@@ -193,13 +193,31 @@ Controls the prefix to add to file paths in coverage payloads, to make them matc
 
 The `CC_TEST_REPORTER_ID` environment variable must be configured.
 
-## Linting
+## Development
+
+### Linting
 
 To run the [Buildkite Plugin Linter](https://github.com/buildkite-plugins/buildkite-plugin-linter), run
 
 ```sh
 docker-compose run --rm lint --name jobready/codeclimate-test-reporter
 ```
+
+### Testing
+
+To run the [Buildkite Plugin Linter](https://github.com/buildkite-plugins/buildkite-plugin-linter), run
+
+```sh
+docker run -it --rm -v "$PWD:/plugin:ro" buildkite/plugin-tester
+```
+
+## Contributing
+
+1. Fork the repo
+2. Make the changes
+3. Run the tests
+4. Commit and push your changes
+5. Send a pull request
 
 ## License
 

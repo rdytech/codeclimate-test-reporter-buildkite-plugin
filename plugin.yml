@@ -16,7 +16,11 @@ configuration:
       type: integer
     debug:
       type: string
+    download:
+      type: boolean
     format:
+      type: boolean
+    install:
       type: boolean
     report:
       type: boolean
