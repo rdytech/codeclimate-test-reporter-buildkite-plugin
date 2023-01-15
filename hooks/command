@@ -73,8 +73,6 @@ report_coverage() {
   fi
 
   printf -- "--- :codeclimate: Reporting coverage\\n"
-  pwd
-  ls **
 
   args=()
   args+=( "sum-coverage" )
@@ -83,7 +81,7 @@ report_coverage() {
     args+=( "--parts" )
     args+=( "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}" )
   fi
-  args+=( "coverage/${formatted_file_prefix}.*.json" )
+  args+=( coverage/${formatted_file_prefix}.*.json )
   echo cc-test-reporter "${args[@]}"
   cc-test-reporter "${args[@]}"
 
