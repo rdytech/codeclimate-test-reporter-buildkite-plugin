@@ -55,7 +55,7 @@ load '/usr/local/lib/bats/load.bash'
 
   assert_success
   assert_output --partial "--- :codeclimate: Formatting coverage"
-  assert_output --partial "Formatting file: coverage/.resultset.json to coverage/codeclimate.1.json"
+  assert_output --partial "cc-test-reporter format-coverage --input-type simplecov --output coverage/codeclimate.1.json coverage/.resultset.json"
   assert_output --partial "Artifacts formatted"
 
   unstub cc-test-reporter
@@ -74,7 +74,7 @@ load '/usr/local/lib/bats/load.bash'
 
   assert_success
   assert_output --partial "--- :codeclimate: Formatting coverage"
-  assert_output --partial "Formatting file: coverage/.resultset.json to coverage/codeclimate.1.json"
+  assert_output --partial "cc-test-reporter format-coverage --input-type simplecov --output coverage/codeclimate.1.json --prefix /app coverage/.resultset.json"
   assert_output --partial "Artifacts formatted"
 
   unstub cc-test-reporter
@@ -93,7 +93,7 @@ load '/usr/local/lib/bats/load.bash'
 
   assert_success
   assert_output --partial "--- :codeclimate: Formatting coverage"
-  assert_output --partial "Formatting file: coverage/.resultset.json to coverage/codeclimate.1.json"
+  assert_output --partial "cc-test-reporter format-coverage --input-type simplecov --output coverage/codeclimate.1.json --add-prefix /path coverage/.resultset.json"
   assert_output --partial "Artifacts formatted"
 
   unstub cc-test-reporter
@@ -106,6 +106,7 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT="coverage/.resultset.json"
   export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE="simplecov"
 
+  stub ls "\* : echo 'listing inputs'"
   stub cc-test-reporter \
     "sum-coverage coverage/codeclimate.*.json : echo 'Coverage summed'" \
     "upload-coverage : echo 'Coverage uploaded'"
@@ -118,6 +119,7 @@ load '/usr/local/lib/bats/load.bash'
   assert_output --partial "Coverage uploaded"
 
   unstub cc-test-reporter
+  unstub ls
 }
 
 @test "Reports coverage with 3 parts" {
@@ -128,6 +130,7 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE="simplecov"
   export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS="3"
 
+  stub ls "\* : echo 'listing inputs'"
   stub cc-test-reporter \
     "sum-coverage --parts 3 coverage/codeclimate.*.json : echo 'Coverage summed'" \
     "upload-coverage : echo 'Coverage uploaded'"
@@ -140,4 +143,5 @@ load '/usr/local/lib/bats/load.bash'
   assert_output --partial "Coverage uploaded"
 
   unstub cc-test-reporter
+  unstub ls
 }

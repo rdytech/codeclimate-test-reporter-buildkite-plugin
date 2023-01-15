@@ -23,12 +23,12 @@ download_artifacts() {
   fi
 
   printf -- "--- :buildkite: Downloading artifact\\n"
+  echo buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
   buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
 }
 
 format_file() {
   output_file="coverage/$formatted_file_prefix.$2.json"
-  printf -- "Formatting file: %s to %s\\n" "$1" "$output_file"
 
   args=()
   args+=( "format-coverage" )
@@ -64,6 +64,7 @@ format_files() {
     (( count++ ))
   done
 
+  echo "waiting for parallel formatting to finish..."
   wait
 }
 
@@ -73,6 +74,9 @@ report_coverage() {
   fi
 
   printf -- "--- :codeclimate: Reporting coverage\\n"
+
+  echo ls "coverage/${formatted_file_prefix}.*.json"
+  ls "coverage/${formatted_file_prefix}.*.json"
 
   args=()
   args+=( "sum-coverage" )
