@@ -7,15 +7,12 @@ install_reporter() {
     return
   fi
 
-  if command -v cc-test-reporter &> /dev/null; then
-    printf -- "--- :codeclimate: Using local binary"
-  else
-    printf -- "--- :codeclimate: Installing %s cc-test-reporter\\n" "${version}"
+  printf -- "--- :codeclimate: Installing %s cc-test-reporter\\n" "${version}"
 
-    curl --location --silent --output /usr/local/bin/cc-test-reporter \
-      "https://codeclimate.com/downloads/test-reporter/test-reporter-${version}-linux-amd64" && \
-    chmod +x /usr/local/bin/cc-test-reporter
-  fi
+  curl --location --silent --output ./cc-test-reporter \
+    "https://codeclimate.com/downloads/test-reporter/test-reporter-${version}-linux-amd64" && \
+  chmod +x ./cc-test-reporter
+  printf -- "cc-test-reporter --version\\n`cc-test-reporter -v`\\n"
 }
 
 download_artifacts() {

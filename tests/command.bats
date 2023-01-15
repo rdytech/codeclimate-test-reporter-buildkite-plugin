@@ -10,8 +10,9 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT="false"
   export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT="false"
 
-  stub curl "--location --silent --output /usr/local/bin/cc-test-reporter \"https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64\" : echo 'Binary downloaded'"
-  stub chmod "+x /usr/local/bin/cc-test-reporter : echo 'Binary made executable'"
+  stub curl "--location --silent --output ./cc-test-reporter \"https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64\" : echo 'Binary downloaded'"
+  stub chmod "+x ./cc-test-reporter : echo 'Binary made executable'"
+  stub cc-test-reporter "-v : echo 'Code Climate Test Reporter version'"
 
   run "$PWD/hooks/command"
 
@@ -19,9 +20,11 @@ load '/usr/local/lib/bats/load.bash'
   assert_output --partial "--- :codeclimate: Installing latest cc-test-reporter"
   assert_output --partial "Binary downloaded"
   assert_output --partial "Binary made executable"
+  assert_output --partial "Code Climate Test Reporter version"
 
   unstub curl
   unstub chmod
+  unstub cc-test-reporter
 }
 
 @test "Downloads artifacts" {
