@@ -13,6 +13,8 @@ install_reporter() {
     "https://codeclimate.com/downloads/test-reporter/test-reporter-${version}-linux-amd64" && \
   chmod +x ./cc-test-reporter
   printf -- "cc-test-reporter --version\\n`cc-test-reporter -v`\\n"
+  # add current working directory to path so cc-test-reporter is accessible
+  export PATH=${PATH}:$(pwd)
 }
 
 download_artifacts() {
