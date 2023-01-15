@@ -28,7 +28,8 @@ download_artifacts() {
 }
 
 format_file() {
-  output_file="coverage/$formatted_file_prefix.$2.json"
+  output_file="coverage/$formatted_file_prefix.$(basename $1)"
+  [[ $output_file == *.json ]] || output_file+=.json
 
   args=()
   args+=( "format-coverage" )
@@ -60,8 +61,7 @@ format_files() {
 
   count=1
   for f in ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}; do
-    format_file "$f" "$count" &
-    (( count++ ))
+    format_file "$f" &
   done
 
   wait
