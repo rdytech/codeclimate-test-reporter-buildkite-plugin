@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.4] - 2023-01-15
 ### Added
 - Unit tests
+- Make install and download steps optional
 ### Fixed
 - Makes --add-prefix properly optional
 
