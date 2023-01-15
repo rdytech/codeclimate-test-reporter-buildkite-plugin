@@ -12,9 +12,9 @@ install_reporter() {
   curl --location --silent --output ./cc-test-reporter \
     "https://codeclimate.com/downloads/test-reporter/test-reporter-${version}-linux-amd64" && \
   chmod +x ./cc-test-reporter
-  printf -- "cc-test-reporter --version\\n`cc-test-reporter -v`\\n"
   # add current working directory to path so cc-test-reporter is accessible
   export PATH=${PATH}:$(pwd)
+  printf -- "cc-test-reporter --version\\n`cc-test-reporter -v`\\n"
 }
 
 download_artifacts() {
@@ -47,6 +47,7 @@ format_file() {
   fi
   args+=( "$1" )
 
+  echo cc-test-reporter "${args[@]}"
   cc-test-reporter "${args[@]}"
 }
 
@@ -81,9 +82,14 @@ report_coverage() {
     args+=( "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}" )
   fi
   args+=( "coverage/${formatted_file_prefix}.*.json" )
-
+  echo cc-test-reporter "${args[@]}"
   cc-test-reporter "${args[@]}"
-  cc-test-reporter upload-coverage ${debug:+"-d"}
+
+  args=()
+  args+=( "upload-coverage" )
+  args+=( ${debug:+"-d"} )
+  echo cc-test-reporter "${args[@]}"
+  cc-test-reporter "${args[@]}"
 }
 
 debug=""
