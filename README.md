@@ -154,9 +154,16 @@ If the coverage was generated from a Docker container, prefix would be the Docke
 
 The preferred version of the test reporter to download. Defaults to `latest`.
 
-Example: `0.4.3`
+Example: `0.10.4`
+
+Must be a valid release version from
+https://github.com/codeclimate/test-reporter/releases
 
 ### `parts` (optional)
+
+Passed through to the --parts option of
+
+https://github.com/codeclimate/test-reporter/blob/master/man/cc-test-reporter-sum-coverage.1.md
 
 If you expect multiple partial coverage artifacts, set this value to enforce a check. If not set the plugin will proceed with any/all provided parts.
 
@@ -194,11 +201,15 @@ Example: `false`
 
 ### `file_prefix` (optional, default `codeclimate`)
 
-Controls the name outputs files formatted by the codeclimate test reporter. Required to stop artifact names clashing when processing muiltple test suites.
+Controls the name outputs files formatted by the codeclimate test reporter. Required to stop artifact names clashing when processing multiple test suites.
 
 ### `add_prefix` (optional, default `<empty_string>`)
 
 Controls the prefix to add to file paths in coverage payloads, to make them match the project's directory structure.
+
+Passed through to the --add-prefix option of
+
+https://github.com/codeclimate/test-reporter/blob/master/man/cc-test-reporter-format-coverage.1.md
 
 
 ### `CC_TEST_REPORTER_ID` (required)
