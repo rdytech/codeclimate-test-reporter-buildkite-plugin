@@ -14,7 +14,7 @@ install_reporter() {
   chmod +x ./cc-test-reporter
   # add current working directory to path so cc-test-reporter is accessible
   export PATH=${PATH}:$(pwd)
-  printf -- "cc-test-reporter --version\\n`cc-test-reporter -v`\\n"
+  printf -- "cc-test-reporter --version\\n$(cc-test-reporter -v)\\n"
 }
 
 download_artifacts() {
@@ -64,7 +64,6 @@ format_files() {
     (( count++ ))
   done
 
-  echo "waiting for parallel formatting to finish..."
   wait
 }
 
@@ -74,9 +73,8 @@ report_coverage() {
   fi
 
   printf -- "--- :codeclimate: Reporting coverage\\n"
-
-  echo ls "coverage/${formatted_file_prefix}.*.json"
-  ls "coverage/${formatted_file_prefix}.*.json"
+  pwd
+  ls **
 
   args=()
   args+=( "sum-coverage" )
