@@ -205,7 +205,7 @@ Example: `false`
 
 Controls the name outputs files formatted by the codeclimate test reporter. Required to stop artifact names clashing when processing multiple test suites.
 
-### `add_prefix` (optional, default `<empty_string>`)
+### `add_prefix` (optional)
 
 Controls the prefix to add to file paths in coverage payloads, to make them match the project's directory structure.
 
