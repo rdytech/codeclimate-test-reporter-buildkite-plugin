@@ -1,5 +1,7 @@
 # codeclimate-test-reporter-buildkite-plugin
 
+[![Build status](https://badge.buildkite.com/f02ebd0ee8076077620275a2d77190da07c192522aaaeeb940.svg)](https://buildkite.com/jobready/codeclimate-test-reporter-buildkite-plugin)
+
 A BuildKite plugin
 
 https://buildkite.com/docs/agent/plugins
@@ -218,20 +220,28 @@ The `CC_TEST_REPORTER_ID` environment variable must be configured.
 
 ## Development
 
+### shellcheck
+
+To run the [shellcheck](https://github.com/koalaman/shellcheck), run
+
+```sh
+docker compose run --rm shellcheck hooks/*
+```
+
 ### Linting
 
 To run the [Buildkite Plugin Linter](https://github.com/buildkite-plugins/buildkite-plugin-linter), run
 
 ```sh
-docker-compose run --rm lint --name jobready/codeclimate-test-reporter
+docker-compose run --rm lint
 ```
 
 ### Testing
 
-To run the [Buildkite Plugin Linter](https://github.com/buildkite-plugins/buildkite-plugin-linter), run
+To run the [Buildkite Plugin Tester](https://github.com/buildkite-plugins/buildkite-plugin-tester), run
 
 ```sh
-docker run -it --rm -v "$PWD:/plugin:ro" buildkite/plugin-tester
+docker-compose run --rm tests
 ```
 
 ## Contributing
