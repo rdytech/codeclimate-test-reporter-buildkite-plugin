@@ -2,7 +2,8 @@ steps:
   - label: ":shell: shellcheck"
     plugins:
       - shellcheck#v1.3.0:
-        files: hooks/*
+        files:
+          - hooks/*
 
   - label: ":sparkles: lint"
     plugins:
