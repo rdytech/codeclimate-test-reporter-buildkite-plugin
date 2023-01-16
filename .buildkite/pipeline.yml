@@ -4,13 +4,19 @@ steps:
       - shellcheck#v1.3.0:
           files:
             - hooks/*
+    agents:
+      queue: docker-light
 
   - label: ":sparkles: lint"
     plugins:
       - plugin-linter#v3.0.0:
           id: shellcheck
+    agents:
+      queue: docker-light
 
   - label: ":docker: :hammer:"
     plugins:
       docker-compose#v4.9.0:
         run: tests
+    agents:
+      queue: docker-light
