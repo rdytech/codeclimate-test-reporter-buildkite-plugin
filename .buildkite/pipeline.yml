@@ -10,7 +10,7 @@ steps:
   - label: ":sparkles: lint"
     plugins:
       - plugin-linter#v3.0.0:
-          id: shellcheck
+          id: jobready/codeclimate-test-reporter
     agents:
       queue: docker-light
 
