@@ -13,8 +13,9 @@ install_reporter() {
     "https://codeclimate.com/downloads/test-reporter/test-reporter-${version}-linux-amd64" && \
   chmod +x ./cc-test-reporter
   # add current working directory to path so cc-test-reporter is accessible
-  export PATH=${PATH}:$(pwd)
-  printf -- "cc-test-reporter --version\\n$(cc-test-reporter -v)\\n"
+  PATH=${PATH}:$(pwd)
+  export PATH
+  printf -- "cc-test-reporter --version\\n%s\\n" "$(cc-test-reporter -v)"
 }
 
 download_artifacts() {
@@ -28,7 +29,8 @@ download_artifacts() {
 }
 
 format_file() {
-  output_file="coverage/$formatted_file_prefix.$(basename $1)"
+  existing_file=$(basename "$1")
+  output_file="coverage/$formatted_file_prefix.$existing_file"
   [[ $output_file == *.json ]] || output_file+=.json
 
   args=()
@@ -59,7 +61,6 @@ format_files() {
 
   printf -- "--- :codeclimate: Formatting coverage\\n"
 
-  count=1
   for f in ${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}; do
     format_file "$f" &
   done
@@ -81,6 +82,7 @@ report_coverage() {
     args+=( "--parts" )
     args+=( "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_PARTS}" )
   fi
+  # shellcheck disable=SC2206
   args+=( coverage/${formatted_file_prefix}.*.json )
   echo cc-test-reporter "${args[@]}"
   cc-test-reporter "${args[@]}"

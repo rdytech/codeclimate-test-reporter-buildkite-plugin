@@ -1,11 +1,17 @@
-version: '2'
+version: '3.7'
 services:
   tests:
-    image: buildkite/plugin-tester
+    image: buildkite/plugin-tester:v4.0.0
     volumes:
       - ".:/plugin:ro"
+
   lint:
     image: buildkite/plugin-linter
-    command: ['--id', 'jobready/codeclimate-test-reporter-buildkite-plugin']
+    command: ['--id', 'jobready/codeclimate-test-reporter']
     volumes:
       - ".:/plugin:ro"
+
+  shellcheck:
+    image: koalaman/shellcheck:v0.9.0
+    volumes:
+      - ".:/mnt:ro"
