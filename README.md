@@ -233,7 +233,7 @@ docker compose run --rm shellcheck hooks/*
 To run the [Buildkite Plugin Linter](https://github.com/buildkite-plugins/buildkite-plugin-linter), run
 
 ```sh
-docker-compose run --rm lint
+docker compose run --rm lint
 ```
 
 ### Testing
@@ -241,7 +241,7 @@ docker-compose run --rm lint
 To run the [Buildkite Plugin Tester](https://github.com/buildkite-plugins/buildkite-plugin-tester), run
 
 ```sh
-docker-compose run --rm tests
+docker compose run --rm tests
 ```
 
 ## Contributing
