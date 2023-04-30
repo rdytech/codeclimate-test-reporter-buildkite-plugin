@@ -43,6 +43,42 @@ load '/usr/local/lib/bats/load.bash'
   unstub buildkite-agent
 }
 
+@test "Doesnt run sed command if not set" {
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INSTALL="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DOWNLOAD="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT="coverage/.resultset.json"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE="simplecov"
+
+  run "$PWD/hooks/command"
+  assert_success
+  assert_output --partial "--- :codeclimate: Skipping sed command"
+}
+
+@test "Runs sed command if set" {
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INSTALL="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DOWNLOAD="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT="false"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT="tmp/.resultset.xml"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INPUT_TYPE="simplecov"
+  export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_SED_COMMAND="s|<source>.*</source>|<source>newsource</source>|"
+
+  mkdir -p tmp
+  cp tests/example.xml tmp/.resultset.xml
+
+  run "$PWD/hooks/command"
+
+  assert_success
+  assert_output --partial "--- :codeclimate: Running sed command"
+
+  result="$(cat tmp/.resultset.xml)"
+  [ "$result" = "<source>newsource</source>" ]
+
+  rm tmp/.resultset.xml
+  rmdir tmp
+}
+
+
 @test "Formats files" {
   export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_INSTALL="false"
   export BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_DOWNLOAD="false"

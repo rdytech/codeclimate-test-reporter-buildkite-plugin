@@ -28,6 +28,19 @@ download_artifacts() {
   buildkite-agent artifact download "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}" ./
 }
 
+run_sed() {
+  if [ -z "$sed_command" ] ; then
+    printf -- "--- :codeclimate: Skipping sed command\\n"
+    return
+  fi
+
+  printf -- "--- :codeclimate: Running sed command\\n"
+
+  sed "$sed_command" < "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}"  > tmp.xml
+  cat tmp.xml > "${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_ARTIFACT}"
+  rm tmp.xml
+}
+
 format_file() {
   existing_file=$(basename "$1")
   output_file="coverage/$formatted_file_prefix.$existing_file"
@@ -68,6 +81,7 @@ format_files() {
   wait
 }
 
+
 report_coverage() {
   if [ "$report" = false ] ; then
     return
@@ -103,8 +117,10 @@ format=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FORMAT:-true}
 report=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_REPORT:-true}
 formatted_file_prefix=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_FILE_PREFIX:-"codeclimate"}
 version=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_VERSION:-"latest"}
+sed_command=${BUILDKITE_PLUGIN_CODECLIMATE_TEST_REPORTER_SED_COMMAND:-""}
 
 install_reporter
 download_artifacts
+run_sed
 format_files
 report_coverage

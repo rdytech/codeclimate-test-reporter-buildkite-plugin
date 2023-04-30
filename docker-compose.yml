@@ -3,7 +3,7 @@ services:
   tests:
     image: buildkite/plugin-tester:v4.0.0
     volumes:
-      - ".:/plugin:ro"
+      - ".:/plugin:rw"
 
   lint:
     image: buildkite/plugin-linter

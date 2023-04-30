@@ -218,6 +218,47 @@ https://github.com/codeclimate/test-reporter/blob/master/man/cc-test-reporter-fo
 
 The `CC_TEST_REPORTER_ID` environment variable must be configured.
 
+### `sed_command` (optional)
+Code climate seems to have a bug with coverage.py running inside of docker in a monorepo. This will perform a sed operation on your report so that you can output coverage to xml and substitute the source. (See https://github.com/codeclimate/test-reporter/issues/242#issuecomment-446268128)
+
+Example: `s|<source>.*</source>|<source>my_app_source</source>|`
+
+Repo:
+```
+repo
+↪ my_app_source
+   ↪ package
+```
+
+Docker Image:
+```
+/
+↪ /app
+   ↪ package
+```
+Buildkite Command step:
+```
+- "docker run --rm --volume $(pwd)/coverage:/coverage <docker_image>:latest /bin/bash -c 'pytest --cov=. --cov-report= -v . && coverage xml -o /coverage/coverage.xml'"
+```
+
+
+XML Coverage Report:
+```
+<sources>
+<source>/app</source>
+</sources>
+<packages>
+...
+</packages>
+</coverage>
+```
+Desired Coverage Report (Obtained with sed)
+```
+<sources>
+<source>my_app_source</source>
+</sources>
+```
+
 ## Development
 
 ### shellcheck
