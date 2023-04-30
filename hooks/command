@@ -81,7 +81,6 @@ format_files() {
   wait
 }
 
-
 report_coverage() {
   if [ "$report" = false ] ; then
     return
