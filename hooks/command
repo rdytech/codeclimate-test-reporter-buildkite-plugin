@@ -9,8 +9,13 @@ install_reporter() {
 
   printf -- "--- :codeclimate: Installing %s cc-test-reporter\\n" "${version}"
 
+  arch=$(uname -m)
+  if [[ "$arch" == "x86_64" ]]; then
+    arch="amd64"
+  fi
+
   curl --location --silent --output ./cc-test-reporter \
-    "https://codeclimate.com/downloads/test-reporter/test-reporter-${version}-linux-amd64" && \
+    "https://codeclimate.com/downloads/test-reporter/test-reporter-${version}-linux-${arch}" && \
   chmod +x ./cc-test-reporter
   # add current working directory to path so cc-test-reporter is accessible
   PATH=${PATH}:$(pwd)
